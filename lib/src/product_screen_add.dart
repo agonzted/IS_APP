@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-//nuevo para imagenes
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,49 +9,33 @@ import 'package:date_format/date_format.dart';
 import 'package:inventorystar/models/product.dart';
 import 'package:http/http.dart' as http;
 
-File image;
-String filename;
-
-class ProductScreen extends StatefulWidget {
+class ProductScreenAdd extends StatefulWidget {
   final String idProduct;
 
-  const ProductScreen({this.idProduct});
+  const ProductScreenAdd({this.idProduct});
   @override
-  _ProductScreenState createState() => _ProductScreenState();
+  _ProductScreenAddState createState() => _ProductScreenAddState();
 }
 
 final productReference = FirebaseDatabase.instance.reference().child('product');
 
-class _ProductScreenState extends State<ProductScreen> {
+class _ProductScreenAddState extends State<ProductScreenAdd> {
   List<Product> items;
   String auxId;
 
   Map data;
   List productData = new List();
   List productDataOne = new List();
-  String name;
-  String code;
-  String description;
-  String price;
-  String stock;
 
-  _getProduct() async {
-    //print('hola/${_auxController.text}');
-    http.Response response = await http
-        .get(Uri.parse('https://api-inventary.herokuapp.com/api/products'));
-    data = json.decode(response.body);
-    setState(() {
-      productData = data['products'];
-      for (var x = 0; x < productData.length; x++) {
-        if (productData[x]['_id'] == _auxController.text) {
-          productDataOne.add(productData[x]);
-        }
-      }
-    });
-  }
+  final TextEditingController _nameController = new TextEditingController();
+  final TextEditingController _codebarController = new TextEditingController();
+  final TextEditingController _descriptionController = new TextEditingController();
+  final TextEditingController _priceController = new TextEditingController();
+  final TextEditingController _stockController= new TextEditingController();
 
-  _updateProduct() async {
-    auxId = _auxController.text;
+  _createProduct() async {
+    print("xd/${_nameController.text}");
+    print(_nameController.text);
     Map data = {
       'name': _nameController.text,
       'code': _codebarController.text,
@@ -60,45 +43,17 @@ class _ProductScreenState extends State<ProductScreen> {
       'price': _priceController.text,
       'stock': _stockController.text,
       'expiration': 'exampleExpiration',
-      'isExpiration': 'false'
+      'isExpiration': 'true'
     };
     print("OK1");
     var body = json.encode(data);
-      var response = await http.post(
-          Uri.parse('https://api-inventary.herokuapp.com/api/products/${auxId}'),
-          headers: {"Content-Type": "application/json"},
-          body: body);
-      print("OK");
+    var response = await http.post(
+        Uri.parse('https://api-inventary.herokuapp.com/api/products/'),
+        headers: {"Content-Type": "application/json"},
+        body: body);
+    print("OK");
   }
 
-
-  TextEditingController _auxController;
-  TextEditingController _nameController;
-  TextEditingController _codebarController;
-  TextEditingController _descriptionController;
-  TextEditingController _priceController;
-  TextEditingController _stockController;
-
-  //nuevo imagen
-  String productImage;
-
-  pickerCam() async {
-    File img = await ImagePicker.pickImage(source: ImageSource.camera);
-    // File img = await ImagePicker.pickImage(source: ImageSource.camera);
-    if (img != null) {
-      image = img;
-      setState(() {});
-    }
-  }
-
-  pickerGallery() async {
-    File img = await ImagePicker.pickImage(source: ImageSource.gallery);
-    // File img = await ImagePicker.pickImage(source: ImageSource.camera);
-    if (img != null) {
-      image = img;
-      setState(() {});
-    }
-  }
 
   Widget divider() {
     return Padding(
@@ -115,18 +70,6 @@ class _ProductScreenState extends State<ProductScreen> {
   initState() {
     // TODO: implement initState
     super.initState();
-    _auxController = new TextEditingController(text: widget.idProduct);
-    Future.delayed(Duration.zero, () async {
-      //your async 'await' codes goes here
-      await _getProduct();
-      _nameController = new TextEditingController(text: productDataOne[0]['name']);
-      _codebarController = new TextEditingController(text: productDataOne[0]['code']);
-      _descriptionController = new TextEditingController(text: productDataOne[0]['description']);
-      _priceController = new TextEditingController(text: productDataOne[0]['price']);
-      _stockController = new TextEditingController(text: productDataOne[0]['stock']);
-      productImage =
-          'https://png.pngitem.com/pimgs/s/325-3256246_fa-fa-product-icon-transparent-cartoons-fa-fa.png';
-    });
   }
 
   @override
@@ -155,7 +98,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 TextField(
                   controller: _nameController,
                   style:
-                      TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
+                  TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
                   decoration: InputDecoration(
                       icon: Icon(Icons.person), labelText: 'Name'),
                 ),
@@ -166,7 +109,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 TextField(
                   controller: _codebarController,
                   style:
-                      TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
+                  TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
                   decoration: InputDecoration(
                       icon: Icon(Icons.person), labelText: 'CodeBar'),
                 ),
@@ -177,7 +120,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 TextField(
                   controller: _descriptionController,
                   style:
-                      TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
+                  TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
                   decoration: InputDecoration(
                       icon: Icon(Icons.list), labelText: 'Description'),
                 ),
@@ -188,7 +131,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 TextField(
                   controller: _priceController,
                   style:
-                      TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
+                  TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
                   decoration: InputDecoration(
                       icon: Icon(Icons.monetization_on), labelText: 'Price'),
                 ),
@@ -199,7 +142,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 TextField(
                   controller: _stockController,
                   style:
-                      TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
+                  TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
                   decoration: InputDecoration(
                       icon: Icon(Icons.shop), labelText: 'Stock'),
                 ),
@@ -209,7 +152,7 @@ class _ProductScreenState extends State<ProductScreen> {
                 Divider(),
                 FlatButton(
                     onPressed: () async {
-                      await _updateProduct();
+                      await _createProduct();
                       Navigator.pop(context);
                     },
                     child: (widget.idProduct != null)

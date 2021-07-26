@@ -108,7 +108,7 @@ class _Login extends State<Login> {
     userData.clear();
     bandera = false;
     http.Response response =
-        await http.get(Uri.parse('http://10.0.2.2:3000/api/users'));
+        await http.get(Uri.parse('https://api-inventary.herokuapp.com/api/users'));
     data = json.decode(response.body);
     setState(() {
       usersData = data['users'];
@@ -116,16 +116,11 @@ class _Login extends State<Login> {
     var contador = 0;
     for (var i = 0; i < usersData.length; i++) {
       if (emailController.text == usersData[i]['email']) {
-        print(emailController.text);
-        print(passwordController.text);
         if (passwordController.text == usersData[i]['password']) {
           userData.add(usersData[i]);
-          print('user'+userData[0]['email']);
           bandera = true;
-          print("Correcto");
           return bandera;
         } else {
-          print("incorrecto 1");
           return bandera;
         }
       } else {

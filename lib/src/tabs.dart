@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:inventorystar/src/product_expired.dart';
 
 import 'listview_product.dart';
 
@@ -126,7 +127,7 @@ class _Tabs extends State<Tabs>{
           body: TabBarView(
             children: [
               ListViewProduct(),
-              caducado(),
+              ListViewProductExpired(),
               noti(),
             ],
           ),
