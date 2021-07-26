@@ -189,7 +189,7 @@ class _Login extends State<Login> {
                                   if (await _getUsers()) {
                                     var route = new MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          new Tabs(),
+                                          new Tabs(emailUserData: userData[0]['email']),
                                     );
 
                                     Navigator.of(context).push(route);

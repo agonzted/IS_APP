@@ -15,8 +15,9 @@ String filename;
 
 class ProductScreen extends StatefulWidget {
   final String idProduct;
+  final String emailUser;
 
-  const ProductScreen({this.idProduct});
+  const ProductScreen({this.idProduct, this.emailUser});
   @override
   _ProductScreenState createState() => _ProductScreenState();
 }

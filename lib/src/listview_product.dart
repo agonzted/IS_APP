@@ -10,6 +10,10 @@ import 'package:http/http.dart' as http;
 import 'package:inventorystar/src/product_screen_add.dart';
 
 class ListViewProduct extends StatefulWidget {
+
+  final String emailUser;
+
+  ListViewProduct({this.emailUser});
   @override
   _ListViewProductState createState() => _ListViewProductState();
 }
@@ -21,7 +25,8 @@ class _ListViewProductState extends State<ListViewProduct> {
   List productData = new List();
   List productExpiredData = new List();
 
-  _getProducts() async {
+  Future<void> _getProducts() async {
+    productData.clear();
     //print(widget.nameData);
     http.Response response = await http
         .get(Uri.parse('https://api-inventary.herokuapp.com/api/products'));
@@ -29,8 +34,10 @@ class _ListViewProductState extends State<ListViewProduct> {
     setState(() {
       productExpiredData = data['products'];
       for(var x = 0; x < productExpiredData.length; x++) {
-        if (productExpiredData[x]['isExpiration'] == "false") {
-          productData.add(productExpiredData[x]);
+        if(productExpiredData[x]['userEmail'] == widget.emailUser) {
+          if (productExpiredData[x]['isExpiration'] == "false") {
+            productData.add(productExpiredData[x]);
+          }
         }
       }
     });
@@ -62,89 +69,92 @@ class _ListViewProductState extends State<ListViewProduct> {
           centerTitle: true,
           backgroundColor: Colors.greenAccent,
         ),
-        body: Center(
-          child: ListView.builder(
-              itemCount: productData.length,
-              padding: EdgeInsets.only(top: 3.0),
-              itemBuilder: (context, position) {
-                return Column(
-                  children: <Widget>[
-                    Divider(
-                      height: 1.0,
-                    ),
-                    Container(
-                      padding: new EdgeInsets.all(3.0),
-                      child: Card(
-                        child: Row(
-                          children: <Widget>[
-                            //nuevo imagen
-                            new Container(
-                              padding: new EdgeInsets.all(5.0),
-                              child: Image.network(
-                                'https://png.pngitem.com/pimgs/s/325-3256246_fa-fa-product-icon-transparent-cartoons-fa-fa.png',
-                                fit: BoxFit.fill,
-                                height: 57.0,
-                                width: 57.0,
+        body: RefreshIndicator(
+          onRefresh: _getProducts,
+          child: Center(
+            child: ListView.builder(
+                itemCount: productData.length,
+                padding: EdgeInsets.only(top: 3.0),
+                itemBuilder: (context, position) {
+                  return Column(
+                    children: <Widget>[
+                      Divider(
+                        height: 1.0,
+                      ),
+                      Container(
+                        padding: new EdgeInsets.all(3.0),
+                        child: Card(
+                          child: Row(
+                            children: <Widget>[
+                              //nuevo imagen
+                              new Container(
+                                padding: new EdgeInsets.all(5.0),
+                                child: Image.network(
+                                  'https://png.pngitem.com/pimgs/s/325-3256246_fa-fa-product-icon-transparent-cartoons-fa-fa.png',
+                                  fit: BoxFit.fill,
+                                  height: 57.0,
+                                  width: 57.0,
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: ListTile(
-                                title: Text(
-                                  '${productData[position]['name']}',
-                                  style: TextStyle(
-                                    color: Colors.blueAccent,
-                                    fontSize: 21.0,
+                              Expanded(
+                                child: ListTile(
+                                  title: Text(
+                                    '${productData[position]['name']}',
+                                    style: TextStyle(
+                                      color: Colors.blueAccent,
+                                      fontSize: 21.0,
+                                    ),
                                   ),
-                                ),
-                                subtitle: Text(
-                                  '${productData[position]['description']}',
-                                  style: TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontSize: 21.0,
+                                  subtitle: Text(
+                                    '${productData[position]['description']}',
+                                    style: TextStyle(
+                                      color: Colors.blueGrey,
+                                      fontSize: 21.0,
+                                    ),
                                   ),
+                                  onTap: () {
+                                    //print(productData[position]);
+                                    var route = new MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            ProductScreen(
+                                                idProduct: productData[position]
+                                                    ['_id']));
+                                    Navigator.of(context).push(route);
+                                  },
                                 ),
-                                onTap: () {
-                                  //print(productData[position]);
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () => _showDialog(
+                                    context, productData[position]['_id']),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.remove_red_eye,
+                                  color: Colors.blueAccent,
+                                ),
+                                onPressed: () async {
                                   var route = new MaterialPageRoute(
+
                                       builder: (BuildContext context) =>
-                                          ProductScreen(
+                                          ProductInformation(
                                               idProduct: productData[position]
-                                                  ['_id']));
+                                              ['_id']));
                                   Navigator.of(context).push(route);
                                 },
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                              ),
-                              onPressed: () => _showDialog(
-                                  context, productData[position]['_id']),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.remove_red_eye,
-                                color: Colors.blueAccent,
-                              ),
-                              onPressed: () async {
-                                var route = new MaterialPageRoute(
-
-                                    builder: (BuildContext context) =>
-                                        ProductInformation(
-                                            idProduct: productData[position]
-                                            ['_id']));
-                                Navigator.of(context).push(route);
-                              },
-                            )
-                          ],
+                              )
+                            ],
+                          ),
+                          color: Colors.white,
                         ),
-                        color: Colors.white,
                       ),
-                    ),
-                  ],
-                );
-              }),
+                    ],
+                  );
+                }),
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(
@@ -156,8 +166,7 @@ class _ListViewProductState extends State<ListViewProduct> {
             //print(productData[position]);
             var route = new MaterialPageRoute(
                 builder: (BuildContext context) =>
-                    ProductScreenAdd(
-                        idProduct: null));
+                    ProductScreenAdd(idProduct: null, userEmail:widget.emailUser));
             Navigator.of(context).push(route);
           },
         ),

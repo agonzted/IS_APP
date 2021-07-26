@@ -11,8 +11,9 @@ import 'package:http/http.dart' as http;
 
 class ProductScreenAdd extends StatefulWidget {
   final String idProduct;
+  final String userEmail;
 
-  const ProductScreenAdd({this.idProduct});
+  const ProductScreenAdd({this.idProduct, this.userEmail});
   @override
   _ProductScreenAddState createState() => _ProductScreenAddState();
 }
@@ -43,7 +44,8 @@ class _ProductScreenAddState extends State<ProductScreenAdd> {
       'price': _priceController.text,
       'stock': _stockController.text,
       'expiration': 'exampleExpiration',
-      'isExpiration': 'true'
+      'isExpiration': 'true',
+      'userEmail': widget.userEmail
     };
     print("OK1");
     var body = json.encode(data);

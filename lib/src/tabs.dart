@@ -5,6 +5,12 @@ import 'package:inventorystar/src/product_expired.dart';
 import 'listview_product.dart';
 
 class Tabs extends StatefulWidget{
+
+
+  final String emailUserData;
+
+  Tabs({this.emailUserData});
+
   @override
   _Tabs createState() => _Tabs();
 
@@ -126,8 +132,8 @@ class _Tabs extends State<Tabs>{
           ),
           body: TabBarView(
             children: [
-              ListViewProduct(),
-              ListViewProductExpired(),
+              ListViewProduct(emailUser: widget.emailUserData),
+              ListViewProductExpired(emailUser: widget.emailUserData),
               noti(),
             ],
           ),

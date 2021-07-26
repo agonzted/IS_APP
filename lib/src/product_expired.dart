@@ -8,6 +8,9 @@ import 'package:http/http.dart' as http;
 import 'package:inventorystar/src/product_screen_add.dart';
 
 class ListViewProductExpired extends StatefulWidget {
+  final String emailUser;
+
+  ListViewProductExpired({this.emailUser});
   @override
   _ListViewProductExpiredState createState() => _ListViewProductExpiredState();
 }
@@ -24,16 +27,20 @@ class _ListViewProductExpiredState extends State<ListViewProductExpired> {
   List productData = new List();
   List productExpiredData = new List();
 
-  _getProducts() async {
+  Future<void> _getProducts() async {
+    productExpiredData.clear();
     //print(widget.nameData);
     http.Response response = await http
         .get(Uri.parse('https://api-inventary.herokuapp.com/api/products'));
     data = json.decode(response.body);
     setState(() {
       productData = data['products'];
+      print(productData);
       for (var x = 0; x < productData.length; x++) {
-        if (productData[x]['isExpiration'] == "true") {
-          productExpiredData.add(productData[x]);
+        if(productData[x]['userEmail'] == widget.emailUser) {
+          if (productData[x]['isExpiration'] == "true") {
+            productExpiredData.add(productData[x]);
+          }
         }
       }
     });
@@ -49,89 +56,92 @@ class _ListViewProductExpiredState extends State<ListViewProductExpired> {
           centerTitle: true,
           backgroundColor: Colors.greenAccent,
         ),
-        body: Center(
-          child: ListView.builder(
-              itemCount: productExpiredData.length,
-              padding: EdgeInsets.only(top: 3.0),
-              itemBuilder: (context, position) {
-                return Column(
-                  children: <Widget>[
-                    Divider(
-                      height: 1.0,
-                    ),
-                    Container(
-                      padding: new EdgeInsets.all(3.0),
-                      child: Card(
-                        child: Row(
-                          children: <Widget>[
-                            //nuevo imagen
-                            new Container(
-                              padding: new EdgeInsets.all(5.0),
-                              child: Image.network(
-                                'https://png.pngitem.com/pimgs/s/325-3256246_fa-fa-product-icon-transparent-cartoons-fa-fa.png',
-                                fit: BoxFit.fill,
-                                height: 57.0,
-                                width: 57.0,
+        body: RefreshIndicator(
+          onRefresh: _getProducts,
+          child: Center(
+            child: ListView.builder(
+                itemCount: productExpiredData.length,
+                padding: EdgeInsets.only(top: 3.0),
+                itemBuilder: (context, position) {
+                  return Column(
+                    children: <Widget>[
+                      Divider(
+                        height: 1.0,
+                      ),
+                      Container(
+                        padding: new EdgeInsets.all(3.0),
+                        child: Card(
+                          child: Row(
+                            children: <Widget>[
+                              //nuevo imagen
+                              new Container(
+                                padding: new EdgeInsets.all(5.0),
+                                child: Image.network(
+                                  'https://png.pngitem.com/pimgs/s/325-3256246_fa-fa-product-icon-transparent-cartoons-fa-fa.png',
+                                  fit: BoxFit.fill,
+                                  height: 57.0,
+                                  width: 57.0,
+                                ),
                               ),
-                            ),
-                            Expanded(
-                              child: ListTile(
-                                title: Text(
-                                  '${productExpiredData[position]['name']}',
-                                  style: TextStyle(
-                                    color: Colors.blueAccent,
-                                    fontSize: 21.0,
+                              Expanded(
+                                child: ListTile(
+                                  title: Text(
+                                    '${productExpiredData[position]['name']}',
+                                    style: TextStyle(
+                                      color: Colors.blueAccent,
+                                      fontSize: 21.0,
+                                    ),
                                   ),
-                                ),
-                                subtitle: Text(
-                                  '${productExpiredData[position]['description']}',
-                                  style: TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontSize: 21.0,
+                                  subtitle: Text(
+                                    '${productExpiredData[position]['description']}',
+                                    style: TextStyle(
+                                      color: Colors.blueGrey,
+                                      fontSize: 21.0,
+                                    ),
                                   ),
+                                  onTap: () {
+                                    //print(productData[position]);
+                                    var route = new MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            ProductScreen(
+                                                idProduct: productExpiredData[position]
+                                                ['_id']));
+                                    Navigator.of(context).push(route);
+                                  },
                                 ),
-                                onTap: () {
-                                  //print(productData[position]);
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () => _showDialog(
+                                    context, productExpiredData[position]['_id']),
+                              ),
+                              IconButton(
+                                icon: Icon(
+                                  Icons.remove_red_eye,
+                                  color: Colors.blueAccent,
+                                ),
+                                onPressed: () async {
                                   var route = new MaterialPageRoute(
+
                                       builder: (BuildContext context) =>
-                                          ProductScreen(
+                                          ProductInformation(
                                               idProduct: productExpiredData[position]
                                               ['_id']));
                                   Navigator.of(context).push(route);
                                 },
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.delete,
-                                color: Colors.red,
-                              ),
-                              onPressed: () => _showDialog(
-                                  context, productExpiredData[position]['_id']),
-                            ),
-                            IconButton(
-                              icon: Icon(
-                                Icons.remove_red_eye,
-                                color: Colors.blueAccent,
-                              ),
-                              onPressed: () async {
-                                var route = new MaterialPageRoute(
-
-                                    builder: (BuildContext context) =>
-                                        ProductInformation(
-                                            idProduct: productExpiredData[position]
-                                            ['_id']));
-                                Navigator.of(context).push(route);
-                              },
-                            )
-                          ],
+                              )
+                            ],
+                          ),
+                          color: Colors.white,
                         ),
-                        color: Colors.white,
                       ),
-                    ),
-                  ],
-                );
-              }),
+                    ],
+                  );
+                }),
+          ),
         ),
       ),
     );
