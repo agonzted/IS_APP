@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inventorystar/src/product_expired.dart';
-
+import 'package:http/http.dart' as http;
 import 'listview_product.dart';
+import 'dart:convert';
 
 class Tabs extends StatefulWidget{
 
@@ -15,6 +16,8 @@ class Tabs extends StatefulWidget{
   _Tabs createState() => _Tabs();
 
 }
+
+
 
 Widget products(){
   return Column(
@@ -112,6 +115,56 @@ Widget caducado(){
 
 
 class _Tabs extends State<Tabs>{
+
+
+  Map data;
+  List productData = new List();
+  List productExpiredData = new List();
+
+  Future<void> _updateProducts() async {
+    productExpiredData.clear();
+    var date = DateTime.now();
+    http.Response response = await http
+        .get(Uri.parse('https://api-inventary.herokuapp.com/api/products'));
+    data = json.decode(response.body);
+    setState(() async {
+      productData = data['products'];
+      print(productData);
+      for (var x = 0; x < productData.length; x++) {
+        if(productData[x]['userEmail'] == widget.emailUserData) {
+          if(date.isAfter(DateTime.tryParse(productData[x]['expiration']))){
+            print("expirado");
+            data = {
+              'name': productData[x]['name'],
+              'code': productData[x]['code'],
+              'description': productData[x]['description'],
+              'price': productData[x]['price'],
+              'stock': productData[x]['stock'],
+              'expiration': productData[x]['expiration'],
+              'isExpiration': 'true'
+            };
+            var body = json.encode(data);
+            var response = await http.post(
+                Uri.parse('https://api-inventary.herokuapp.com/api/products/${productData[x]['_id']}'),
+                headers: {"Content-Type": "application/json"},
+                body: body);
+          }
+        }
+      }
+    });
+  }
+
+  @override
+  initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration.zero, () async {
+      _updateProducts();
+    });
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

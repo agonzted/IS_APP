@@ -24,6 +24,7 @@ class _ProductInformationState extends State<ProductInformation> {
   TextEditingController _descriptionController;
   TextEditingController _priceController;
   TextEditingController _stockController;
+  TextEditingController _expiredController;
 
 
   @override
@@ -37,6 +38,7 @@ class _ProductInformationState extends State<ProductInformation> {
       _descriptionController = new TextEditingController(text: productDataOne[0]['description']);
       _priceController = new TextEditingController(text: productDataOne[0]['price']);
       _stockController = new TextEditingController(text: productDataOne[0]['stock']);
+      _expiredController = new TextEditingController(text: productDataOne[0]['expiration']);
     });
   }
 
@@ -86,6 +88,9 @@ class _ProductInformationState extends State<ProductInformation> {
                   Padding(padding: EdgeInsets.only(top: 8.0),),
                   Divider(),
                   new Text("Stock : ${_stockController.text}", style: TextStyle(fontSize: 18.0),),
+                  Padding(padding: EdgeInsets.only(top: 8.0),),
+                  Divider(),
+                  new Text("Expiration : ${_expiredController.text}", style: TextStyle(fontSize: 18.0),),
                   Padding(padding: EdgeInsets.only(top: 8.0),),
                   Divider(),
                   Container(

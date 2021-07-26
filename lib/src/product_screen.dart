@@ -79,6 +79,7 @@ class _ProductScreenState extends State<ProductScreen> {
   TextEditingController _descriptionController;
   TextEditingController _priceController;
   TextEditingController _stockController;
+  TextEditingController _expiredController;
 
   //nuevo imagen
   String productImage;
@@ -125,6 +126,7 @@ class _ProductScreenState extends State<ProductScreen> {
       _descriptionController = new TextEditingController(text: productDataOne[0]['description']);
       _priceController = new TextEditingController(text: productDataOne[0]['price']);
       _stockController = new TextEditingController(text: productDataOne[0]['stock']);
+      _expiredController = new TextEditingController(text: productDataOne[0]['expiration']);
       productImage =
           'https://png.pngitem.com/pimgs/s/325-3256246_fa-fa-product-icon-transparent-cartoons-fa-fa.png';
     });
@@ -203,6 +205,17 @@ class _ProductScreenState extends State<ProductScreen> {
                       TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
                   decoration: InputDecoration(
                       icon: Icon(Icons.shop), labelText: 'Stock'),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 1.0),
+                ),
+                Divider(),
+                TextField(
+                  controller: _expiredController,
+                  style:
+                  TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
+                  decoration: InputDecoration(
+                      icon: Icon(Icons.access_time), labelText: 'Expiration'),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 1.0),

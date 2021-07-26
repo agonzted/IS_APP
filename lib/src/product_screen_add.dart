@@ -33,6 +33,7 @@ class _ProductScreenAddState extends State<ProductScreenAdd> {
   final TextEditingController _descriptionController = new TextEditingController();
   final TextEditingController _priceController = new TextEditingController();
   final TextEditingController _stockController= new TextEditingController();
+  final TextEditingController _expiredController= new TextEditingController();
 
   _createProduct() async {
     print("xd/${_nameController.text}");
@@ -43,8 +44,8 @@ class _ProductScreenAddState extends State<ProductScreenAdd> {
       'description': _descriptionController.text,
       'price': _priceController.text,
       'stock': _stockController.text,
-      'expiration': 'exampleExpiration',
-      'isExpiration': 'true',
+      'expiration': _expiredController.text,
+      'isExpiration': 'false',
       'userEmail': widget.userEmail
     };
     print("OK1");
@@ -147,6 +148,17 @@ class _ProductScreenAddState extends State<ProductScreenAdd> {
                   TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
                   decoration: InputDecoration(
                       icon: Icon(Icons.shop), labelText: 'Stock'),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 1.0),
+                ),
+                Divider(),
+                TextField(
+                  controller: _expiredController,
+                  style:
+                  TextStyle(fontSize: 17.0, color: Colors.deepOrangeAccent),
+                  decoration: InputDecoration(
+                      icon: Icon(Icons.access_time), labelText: 'Expiration'),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 1.0),
