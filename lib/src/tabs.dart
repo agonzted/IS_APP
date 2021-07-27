@@ -123,6 +123,7 @@ class _Tabs extends State<Tabs>{
 
   Future<void> _updateProducts() async {
     productExpiredData.clear();
+    productData.clear();
     var date = DateTime.now();
     http.Response response = await http
         .get(Uri.parse('https://api-inventary.herokuapp.com/api/products'));
@@ -132,8 +133,11 @@ class _Tabs extends State<Tabs>{
       print(productData);
       for (var x = 0; x < productData.length; x++) {
         if(productData[x]['userEmail'] == widget.emailUserData) {
+          print("fecha");
+          print(productData[x]['expiration']);
           if(date.isAfter(DateTime.tryParse(productData[x]['expiration']))){
             print("expirado");
+            print(productData[x]['name']);
             data = {
               'name': productData[x]['name'],
               'code': productData[x]['code'],
