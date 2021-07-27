@@ -60,7 +60,7 @@ class _ProductScreenState extends State<ProductScreen> {
       'description': _descriptionController.text,
       'price': _priceController.text,
       'stock': _stockController.text,
-      'expiration': 'exampleExpiration',
+      'expiration': _expiredController.text,
       'isExpiration': 'false'
     };
     print("OK1");
