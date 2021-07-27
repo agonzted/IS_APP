@@ -24,7 +24,7 @@ class Registro extends StatelessWidget {
 
     var body = json.encode(data);
     if (passwordController.text == confirmPasswordController.text) {
-      var response = await http.post(Uri.parse('http://10.0.2.2:3000/api/users'),
+      var response = await http.post(Uri.parse('https://api-inventary.herokuapp.com/api/users'),
           headers: {"Content-Type": "application/json"}, body: body);
     }
   }
@@ -154,7 +154,7 @@ class Registro extends StatelessWidget {
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(top: 14),
                       prefixIcon: Icon(Icons.lock, color: Color(0xFF003823)),
-                      hintText: 'Confirmar Password',
+                      hintText: 'Password',
                       hintStyle: TextStyle(color: Colors.black38)),
                 ),
               ),
@@ -181,7 +181,7 @@ class Registro extends StatelessWidget {
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(top: 14),
                       prefixIcon: Icon(Icons.lock, color: Color(0xFF003823)),
-                      hintText: 'Password',
+                      hintText: 'Confirmar Password',
                       hintStyle: TextStyle(color: Colors.black38)),
                 ),
               ),
